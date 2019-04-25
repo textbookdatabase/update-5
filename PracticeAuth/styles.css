@@ -1,0 +1,19 @@
+.search-bar{
+    color: cadetblue;;
+}
+
+/*styling edit button*/
+
+.border {
+  border: 2px gray solid;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
+}
+.ml-auto {
+  margin-left:auto !important;
+}
+.d-block {
+  display:block !important;
+}

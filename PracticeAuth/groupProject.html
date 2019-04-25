@@ -1,0 +1,179 @@
+<!---Adapted from the Net Ninja https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg--->
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+  <title>FireBase Authentication</title>
+</head>
+<body class="grey darken-4">
+
+  <!-- NAVBAR -->
+  <nav class="z-depth-0 grey darken-4">
+    <div class="nav-wrapper container">
+        <img src="img/dT.jpg" style="width: 180px; margin-top: 10px;">
+      <ul id="nav-mobile" class="right">
+          <li class="logged-in" style="display: none; background-color:burlywood;">
+            <a href="#" class="black-text modal-trigger" data-target="modal-account">Account</a>
+          </li>
+          <li class="logged-in" style="display: none; background-color:burlywood;">
+            <a href="#" class="black-text" id="logout">Logout</a>
+          </li>
+
+          <li class="logged-in" style="display: none; background-color:burlywood;">
+            <a href="#" class="black-text modal-trigger" data-target="modal-create">Add Textbook</a>
+          </li>
+          <li class="logged-in" style="display: none; background-color:cadetblue;">
+              <a href="#" class="black-text modal-trigger" data-target="modal-advanced">Advanced Search</a>
+          </li>
+          <li class="logged-out" style="display: none; background-color:burlywood;">
+            <a href="#" class="black-text modal-trigger" data-target="modal-login">Login</a>
+          </li>
+        </span>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ADVANCED SEARCH MODAL -->
+  <div id="modal-advanced" class="modal">
+    <div class="modal-content">
+      <h4>Advanced Search</h4><br />
+      <form id="advanced-form">
+        <div class="input-field">
+          <input type="text" id="title" required>
+          <label id="adv-title" for="title">Book Title</label>
+        </div>
+        <div class="input-field">
+          <textarea id="author" class="materialize-textarea" required></textarea>
+          <label id="adv-author" for="author">Book Author</label>
+        </div>
+        <div class="input-field">
+          <textarea id="ISBN" class="materialize-textarea" required></textarea>
+          <label id="adv-ISBN" for="ISBN">Book ISBN</label>
+        </div>
+        <div class="input-field">
+          <textarea id="Term" class="materialize-textarea" required></textarea>
+          <label id="adv-term" for="Term">Term</label>
+        </div>
+        <button id="adv-search" class="btn yellow darken-2 z-depth-0" id="advSearchButton">Search</button>
+      </form>
+    </div>
+  </div> 
+
+  <!-- LOGIN MODAL -->
+  <div id="modal-login" class="modal">
+    <div class="modal-content">
+      <h4>Login</h4><br />
+      <form id="login-form">
+        <div class="input-field">
+          <input type="email" id="login-email" required />
+          <label for="login-email">Email address</label>
+        </div>
+        <div class="input-field">
+          <input type="password" id="login-password" required />
+          <label for="login-password">Your password</label>
+        </div>
+        <button class="btn yellow darken-2 z-depth-0">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ACCOUNT MODAL -->
+  <div id="modal-account" class="modal">
+    <div class="modal-content center-align">
+      <h4>Account details</h4><br />
+      <div class="account-details"></div>
+    </div>
+  </div>
+
+  <!-- ADD TEXTBOOK MODAL -->
+    <div id="modal-create" class="modal">
+        <div class="modal-content">
+          <h4>Add Textbook</h4><br />
+          <form id="create-form">
+            <div class="input-field">
+              <input type="text" id="title" required>
+              <label for="title">Book Title</label>
+            </div>
+            <div class="input-field">
+              <textarea id="author" class="materialize-textarea" required></textarea>
+              <label for="author">Book Author</label>
+            </div>
+            <div class="input-field">
+                <input type="text" id="ISBN" required>
+                <label for="ISBN">Book ISBN</label>
+              </div>
+              <div class="input-field">
+                  <input type="text" id="Term" required>
+                  <label for="Term">Term</label>
+                </div>
+            <button class="btn yellow darken-2 z-depth-0">Add</button>
+          </form>
+        </div>
+      </div>
+ 
+    <!-- SEARCH BAR -->
+    <div class="container">
+    <div class="input-group mb-3">
+        <input class="search-bar" style="margin-top: 100px;" type="text" class="form-control" 
+        placeholder="Search by Title, Course Number, ISBN, or Term " 
+        aria-label="Search term" aria-describedby="basic-addon" id="bar_for_searching">
+        <div class="input-group-append">
+          <button class="btn btn-secondary" type="button" style="color: black;" id="search_button">Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  
+  <!-- BOOK LIST -->
+  <div class="container" style="margin-top: 40px;">
+    <div class="logged-in">
+      
+      </div></li>
+      <ul class="collapsible z-depth-0 books" style="border: none;">
+      </ul>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.9.0/firebase-firestore.js"></script>
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBUCClVqDAj53TffJKzHVP3bXXtCKj5dwE",
+    authDomain: "my-project-eab16.firebaseapp.com",
+    databaseURL: "https://my-project-eab16.firebaseio.com",
+    projectId: "my-project-eab16",
+    storageBucket: "my-project-eab16.appspot.com",
+    messagingSenderId: "959136312110"
+  };
+  firebase.initializeApp(config);
+  //Make auth and firestore references
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  // update firestore settings
+  //db.settings({timestampsInSnapshots: true});
+</script>
+ 
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/index.js"></script>
+  <script src="scripts/search.js"></script>
+  <script src="scripts/advSearch.js"></script>
+  
+</body>
+</html>
